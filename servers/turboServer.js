@@ -5,9 +5,7 @@ module.exports.startServer = function(client, port, cards) {
     const server = turbo.createServer(async function (req, res) {
         // res.setHeader('content-type', 'application/json')
         let result = "";
-        if (req.url === '/ready') {
-            result = '{"ready": true}'
-        } else {
+        if (req.url !== '/ready') {
             // getUserCard
             const  key = 'user_id:' + req.url.substr(13);
             const count = await client.incr(key)
@@ -17,6 +15,8 @@ module.exports.startServer = function(client, port, cards) {
                 const card = cards[count - 1];
                 result = '{"id": "' + card.id +'", "name": "' + card.name + '"}'
             }
+        } else {
+            result = '{"ready": true}'
         }
     
         // const resultStr = JSON.stringify(result);
